@@ -3,4 +3,5 @@
     <dimen name="title">28dp</dimen>
     <dimen name="loader_size">40dp</dimen>
     <dimen name="inner_margin">10dp</dimen>
+    <dimen name="avatar_size">65dp</dimen>
 </resources>

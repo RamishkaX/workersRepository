@@ -4,7 +4,6 @@ import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
-import android.util.Log
 import com.example.workers.models.SpecialityModel
 import com.example.workers.models.UserModel
 import com.example.workers.models.WorkersSpeciality
@@ -88,5 +87,24 @@ class DBHandler(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 1) 
 
             db?.insert(TABLE_WORKERSSPECIALITY, null, contentValues)
         }
+    }
+
+    fun getSpecialitys(db: SQLiteDatabase?): ArrayList<SpecialityModel> {
+        val cursor = db?.query(TABLE_SPECIALITY, null, null, null, null, null, null)
+        val specialityModelList: ArrayList<SpecialityModel> = arrayListOf()
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                val idIndex = cursor.getColumnIndex(SPECIALITY_ID)
+                val nameIndex = cursor.getColumnIndex(SPECIALITY_NAME)
+
+                do {
+                    specialityModelList.add(SpecialityModel(id = cursor.getInt(idIndex), name = cursor.getString(nameIndex)))
+                } while (cursor.moveToNext())
+            }
+        }
+        cursor?.close()
+
+        return specialityModelList
     }
 }

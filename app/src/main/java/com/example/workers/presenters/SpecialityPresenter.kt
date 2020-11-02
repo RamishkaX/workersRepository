@@ -3,6 +3,7 @@ package com.example.workers.presenters
 import com.arellomobile.mvp.InjectViewState
 import com.arellomobile.mvp.MvpPresenter
 import com.beust.klaxon.Klaxon
+import com.example.workers.R
 import com.example.workers.handlers.DBHandler
 import com.example.workers.models.*
 import com.example.workers.views.SpecialityView
@@ -30,12 +31,11 @@ class SpecialityPresenter : MvpPresenter<SpecialityView>() {
                 var result = klaxon.parse<JsonModel>(response.body?.string().toString())
                 val workModel = createElementsArray(jsonModel = result)
 
-                // initDB(dbHandler = dbHandler, workModel = workModel)
                 viewState.specialityLoaded(dbHandler = dbHandler, workModel = workModel)
             }
 
             override fun onFailure(call: Call, e: IOException) {
-                viewState.specialityNotLoaded(e.message.toString())
+                viewState.specialityNotLoaded(text = e.message.toString(), dbHandler = dbHandler)
             }
         })
     }
@@ -52,10 +52,25 @@ class SpecialityPresenter : MvpPresenter<SpecialityView>() {
         viewState.setupSpecialityList(specialityList = workModel.speciality!!)
     }
 
+    fun loadSpecialityFromDB(dbHandler: DBHandler) {
+        val specialityModelList = dbHandler.getSpecialitys(db = dbHandler.readableDatabase)
+
+        viewState.endLoading()
+
+        if (specialityModelList.isNullOrEmpty()) {
+            viewState.showError(R.string.DB_error)
+        } else {
+            viewState.setupSpecialityList(specialityModelList)
+        }
+    }
 
     fun loadingError(text: String) {
         viewState.endLoading()
         viewState.showError(text = text)
+    }
+
+    fun setSpeciality(specialityId: Int) {
+        viewState.openWorkersFragment(specialityId = specialityId)
     }
 
     private fun createElementsArray(jsonModel: JsonModel?): WorkModel {

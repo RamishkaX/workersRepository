@@ -1,38 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.MainActivity"
-    android:orientation="vertical"
-    android:layout_marginStart="15dp"
-    android:layout_marginEnd="15dp">
-    
-    <FrameLayout
-        android:id="@+id/fl_fragment"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"/>
-    
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical">
+
     <TextView
-        android:id="@+id/txt_speciality"
+        android:id="@+id/txt_worker"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/speciality"
+        android:text="@string/workers"
         android:gravity="center"
         android:textSize="@dimen/title"
         android:textColor="@color/colorPrimary"
         android:layout_marginTop="24dp"/>
-    
+
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/recycler_speciality"
+        android:id="@+id/recycler_workers"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"/>
 
     <com.github.rahatarmanahmed.cpv.CircularProgressView
-        android:id="@+id/cpv_speciality"
+        android:id="@+id/cpv_worker"
         android:layout_width="@dimen/loader_size"
         android:layout_height="@dimen/loader_size"
         android:layout_gravity="center"

@@ -4,7 +4,9 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/colorPrimary"
-    android:layout_marginBottom="20dp">
+    android:layout_marginBottom="20dp"
+    android:clickable="true"
+    android:focusable="true">
 
     <TextView
         android:id="@+id/speciality_txt_speciality"
@@ -12,9 +14,6 @@
         android:layout_height="wrap_content"
         android:textSize="24dp"
         android:textColor="@color/colorWhite"
-        android:layout_marginLeft="@dimen/inner_margin"
-        android:layout_marginRight="@dimen/inner_margin"
-        android:layout_marginTop="@dimen/inner_margin"
-        android:layout_marginBottom="@dimen/inner_margin"/>
+        android:layout_margin="@dimen/inner_margin" />
 
 </FrameLayout>
