@@ -91,10 +91,12 @@ class MainActivity : MvpAppCompatActivity(), SpecialityView {
 
     override fun openWorkersFragment(specialityId: Int) {
         flFragment.visibility = View.VISIBLE
-
         val fragmentTransaction = supportFragmentManager.beginTransaction()
-        val workersFragment = WorkersFragment()
+
+        val bundle = Bundle()
+        bundle.putInt("specialityId", specialityId)
+
         fragmentTransaction.addToBackStack("Workers")
-        fragmentTransaction.add(R.id.fl_fragment, workersFragment).commit()
+        fragmentTransaction.add(R.id.fl_fragment, WorkersFragment.getNewInstance(bundle)).commit()
     }
 }

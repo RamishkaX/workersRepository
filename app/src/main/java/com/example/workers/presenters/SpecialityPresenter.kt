@@ -28,7 +28,7 @@ class SpecialityPresenter : MvpPresenter<SpecialityView>() {
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
                 val klaxon = Klaxon()
-                var result = klaxon.parse<JsonModel>(response.body?.string().toString())
+                val result = klaxon.parse<JsonModel>(response.body?.string().toString())
                 val workModel = createElementsArray(jsonModel = result)
 
                 viewState.specialityLoaded(dbHandler = dbHandler, workModel = workModel)
@@ -54,7 +54,7 @@ class SpecialityPresenter : MvpPresenter<SpecialityView>() {
 
     fun loadSpecialityFromDB(dbHandler: DBHandler) {
         val specialityModelList = dbHandler.getSpecialitys(db = dbHandler.readableDatabase)
-
+        dbHandler.close()
         viewState.endLoading()
 
         if (specialityModelList.isNullOrEmpty()) {
@@ -125,19 +125,19 @@ class SpecialityPresenter : MvpPresenter<SpecialityView>() {
         val dateFormat = SimpleDateFormat("dd.MM.yyyy")
 
         if (dateText.isNullOrEmpty()) {
-            return "-"
+            return null
         }
 
         if (dateText?.indexOf('-') == 2) {
             val inputFormat = SimpleDateFormat("dd-MM-yyyy")
             val date: Date = inputFormat.parse(dateText)
 
-            return dateFormat.format(date) + " г."
+            return dateFormat.format(date)
         } else {
             val inputFormat = SimpleDateFormat("yyyy-MM-dd")
             val date: Date = inputFormat.parse(dateText)
 
-            return dateFormat.format(date) + " г."
+            return dateFormat.format(date)
         }
         //element.birthday?: dateFormat.format(element.birthday)
     }

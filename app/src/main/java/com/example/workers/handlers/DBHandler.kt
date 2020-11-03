@@ -2,6 +2,7 @@ package com.example.workers.handlers
 
 import android.content.ContentValues
 import android.content.Context
+import android.database.sqlite.SQLiteCursor
 import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import com.example.workers.models.SpecialityModel
@@ -12,16 +13,16 @@ val DB_NAME = "Workers"
 val TABLE_USERS = "Users"
 val TABLE_SPECIALITY = "Speciality"
 val TABLE_WORKERSSPECIALITY = "WorkersSpeciality"
-val USER_ID = "id"
-val USER_NAME = "name"
-val USER_LASTNAME = "lastname"
-val USER_BIRTHDAY = "birthday"
-val USER_AVATAR = "avatar"
-val SPECIALITY_ID = "id"
-val SPECIALITY_NAME = "name"
-val WORKERSSPECIALITY_ID = "id"
-val WORKERSSPECIALITY_USERID = "userId"
-val WORKERSSPECIALITY_SPECIALITYID = "specialityId"
+val USER_ID = "userId"
+val USER_NAME = "userName"
+val USER_LASTNAME = "userLastName"
+val USER_BIRTHDAY = "userBirthday"
+val USER_AVATAR = "userAvatar"
+val SPECIALITY_ID = "specialityId"
+val SPECIALITY_NAME = "specialityName"
+val WORKERSSPECIALITY_ID = "workersSpecialityId"
+val WORKERSSPECIALITY_USERID = "workersSpecialityUserId"
+val WORKERSSPECIALITY_SPECIALITYID = "workersSpecialitySpecialityId"
 
 class DBHandler(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 1) {
     override fun onCreate(db: SQLiteDatabase?) {
@@ -106,5 +107,40 @@ class DBHandler(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 1) 
         cursor?.close()
 
         return specialityModelList
+    }
+
+    fun getWorkersFilterBySpeciality(db: SQLiteDatabase?, specialityId: Int): ArrayList<UserModel> {
+        val workersSpecialityList: ArrayList<UserModel> = arrayListOf()
+        val cursor = db?.rawQuery("SELECT ${TABLE_SPECIALITY}.*, ${TABLE_USERS}.*" +
+                " FROM $TABLE_SPECIALITY" +
+                " INNER JOIN $TABLE_WORKERSSPECIALITY" +
+                " ON ${TABLE_SPECIALITY}.${SPECIALITY_ID} = ${TABLE_WORKERSSPECIALITY}.${WORKERSSPECIALITY_SPECIALITYID}" +
+                " AND ${TABLE_SPECIALITY}.${SPECIALITY_ID} = $specialityId" +
+                " INNER JOIN $TABLE_USERS ON ${TABLE_USERS}.${USER_ID} = ${TABLE_WORKERSSPECIALITY}.${WORKERSSPECIALITY_USERID}", null)
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    val specialityModelList = ArrayList<SpecialityModel>()
+                    specialityModelList.add(SpecialityModel(
+                        id = cursor.getInt(cursor.getColumnIndex(SPECIALITY_ID)),
+                        name = cursor.getString(cursor.getColumnIndex(SPECIALITY_NAME))
+                    ))
+                    workersSpecialityList.add(UserModel
+                        (
+                            id = cursor.getInt(cursor.getColumnIndex(USER_ID)),
+                            name = cursor.getString(cursor.getColumnIndex(USER_NAME)),
+                            lastName = cursor.getString(cursor.getColumnIndex(USER_LASTNAME)),
+                            birthday = cursor.getString(cursor.getColumnIndex(USER_BIRTHDAY)),
+                            avatarUrl = cursor.getString(cursor.getColumnIndex(USER_AVATAR)),
+                            speciality = specialityModelList
+                        )
+                    )
+                } while (cursor.moveToNext())
+            }
+        }
+
+        cursor?.close()
+        return workersSpecialityList
     }
 }

@@ -3,4 +3,5 @@
     <string name="speciality">Список специальностей</string>
     <string name="workers">Список работников</string>
     <string name="DB_error">Записи не найдены</string>
+    <string name="age">Возраст</string>
 </resources>

@@ -1,19 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:background="@color/colorPrimary"
+    android:background="?android:attr/selectableItemBackground"
     android:layout_marginBottom="20dp"
     android:clickable="true"
     android:focusable="true">
 
-    <TextView
-        android:id="@+id/speciality_txt_speciality"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textSize="24dp"
-        android:textColor="@color/colorWhite"
-        android:layout_margin="@dimen/inner_margin" />
+        android:layout_gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/speciality_txt_speciality"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="24dp"
+            android:textColor="@color/colorPrimary"
+            android:layout_margin="@dimen/inner_margin" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#FFA6A6A6"/>
+
+    </LinearLayout>
 
 </FrameLayout>
