@@ -17,12 +17,8 @@ class WorkersFragmentPresenter : MvpPresenter<WorkersFragmentView>() {
             viewState.showError(R.string.DB_error)
             return
         }
-
+        dbHandler.close()
         viewState.endLoading()
         viewState.setupWorkersList(workersList = userModelList)
-    }
-
-    fun setUser(userId: Int) {
-        viewState.openUserFragment(userId = userId)
     }
 }

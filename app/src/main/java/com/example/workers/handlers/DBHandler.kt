@@ -143,4 +143,53 @@ class DBHandler(context: Context) : SQLiteOpenHelper(context, DB_NAME, null, 1) 
         cursor?.close()
         return workersSpecialityList
     }
+
+    fun getUserById(db: SQLiteDatabase?, userId: Int) : UserModel {
+        val user: ArrayList<UserModel> = arrayListOf()
+        val specialityList: ArrayList<SpecialityModel> = getUserSpecialities(db = db, userId = userId)
+
+        val cursor = db?.rawQuery("SELECT * FROM $TABLE_USERS WHERE ${TABLE_USERS}.${USER_ID} = $userId", null)
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                user.add(
+                    UserModel(
+                        id = cursor.getInt(cursor.getColumnIndex(USER_ID)),
+                        name = cursor.getString(cursor.getColumnIndex(USER_NAME)),
+                        lastName = cursor.getString(cursor.getColumnIndex(USER_LASTNAME)),
+                        birthday = cursor.getString(cursor.getColumnIndex(USER_BIRTHDAY)),
+                        avatarUrl = cursor.getString(cursor.getColumnIndex(USER_AVATAR)),
+                        speciality = specialityList
+                )
+                )
+            }
+        }
+
+        return user.first()
+    }
+
+    private fun getUserSpecialities(db: SQLiteDatabase?, userId: Int): ArrayList<SpecialityModel> {
+        val specialityList: ArrayList<SpecialityModel> = arrayListOf()
+
+        val cursor = db?.rawQuery(
+            "SELECT ${TABLE_SPECIALITY}.* FROM $TABLE_SPECIALITY" +
+                    " INNER JOIN $TABLE_WORKERSSPECIALITY ON" +
+                    " ${TABLE_SPECIALITY}.${SPECIALITY_ID} = ${TABLE_WORKERSSPECIALITY}.${WORKERSSPECIALITY_SPECIALITYID}" +
+                    " AND ${TABLE_WORKERSSPECIALITY}.${WORKERSSPECIALITY_USERID} = $userId", null
+        )
+
+        if (cursor != null) {
+            if (cursor.moveToFirst()) {
+                do {
+                    specialityList.add(SpecialityModel(
+                        id = cursor.getInt(cursor.getColumnIndex(SPECIALITY_ID)),
+                        name = cursor.getString(cursor.getColumnIndex(SPECIALITY_NAME))
+                    ))
+                } while (cursor.moveToNext())
+            }
+        }
+        cursor?.close()
+
+        return specialityList
+    }
 }

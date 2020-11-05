@@ -11,6 +11,7 @@ import com.example.workers.listeners.OnAdapterItemListener
 import com.example.workers.models.SpecialityModel
 import com.example.workers.models.UserModel
 import com.example.workers.presenters.WorkersFragmentPresenter
+import com.example.workers.tools.ageCalc
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import java.net.URL
@@ -76,27 +77,6 @@ class WorkersAdapter(var workersFragmentPresenter: WorkersFragmentPresenter, var
 
             this.onAdapterItemListener = onAdapterItemListener
             itemView.setOnClickListener(this)
-        }
-
-        private fun ageCalc(birthday: String?) : String {
-            if (birthday.isNullOrEmpty()) {
-                return "-"
-            }
-
-            val year = Calendar.getInstance().get(Calendar.YEAR)
-            val month = Calendar.getInstance().get(Calendar.MONTH)
-            val day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
-            val birthdayArray = birthday.split('.')
-
-            if (birthdayArray[1].toInt() > month) {
-                return (year - birthdayArray[2].toInt()).toString()
-            }
-            else if (birthdayArray[1].toInt() == month && birthdayArray[0].toInt() >= day) {
-                return (year - birthdayArray[2].toInt()).toString()
-            }
-            else {
-                return (year - birthdayArray[2].toInt() - 1).toString()
-            }
         }
 
         override fun onClick(v: View?) {
