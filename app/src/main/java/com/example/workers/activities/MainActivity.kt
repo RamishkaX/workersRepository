@@ -5,6 +5,7 @@ import android.util.Log
 import android.view.View
 import android.widget.FrameLayout
 import android.widget.Toast
+import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -12,8 +13,10 @@ import com.arellomobile.mvp.MvpAppCompatActivity
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.example.workers.R
 import com.example.workers.adapters.SpecialityAdapter
+import com.example.workers.fragments.UserFragment
 import com.example.workers.fragments.WorkersFragment
 import com.example.workers.handlers.DBHandler
+import com.example.workers.listeners.OnAdapterItemListener
 import com.example.workers.models.*
 import com.example.workers.presenters.SpecialityPresenter
 import com.example.workers.views.SpecialityView
@@ -28,12 +31,19 @@ class MainActivity : MvpAppCompatActivity(), SpecialityView {
     lateinit var rvSpeciality: RecyclerView
     private lateinit var specialityAdapter: SpecialityAdapter
     private lateinit var flFragment: FrameLayout
+    private lateinit var workersFragment: WorkersFragment
+    private lateinit var userFragment: UserFragment
+    private lateinit var fragmentTransaction: FragmentTransaction
 
     override fun onBackPressed() {
-        if (supportFragmentManager.backStackEntryCount > 0) {
+        if (supportFragmentManager.backStackEntryCount == 1) {
             supportFragmentManager.popBackStackImmediate()
             flFragment.visibility = View.GONE
-        } else {
+        }
+        else if (supportFragmentManager.backStackEntryCount > 1) {
+            supportFragmentManager.popBackStackImmediate()
+        }
+        else {
             super.onBackPressed()
         }
     }
@@ -91,12 +101,30 @@ class MainActivity : MvpAppCompatActivity(), SpecialityView {
 
     override fun openWorkersFragment(specialityId: Int) {
         flFragment.visibility = View.VISIBLE
-        val fragmentTransaction = supportFragmentManager.beginTransaction()
+        fragmentTransaction = supportFragmentManager.beginTransaction()
 
         val bundle = Bundle()
         bundle.putInt("specialityId", specialityId)
 
-        fragmentTransaction.addToBackStack("Workers")
-        fragmentTransaction.add(R.id.fl_fragment, WorkersFragment.getNewInstance(bundle)).commit()
+        workersFragment = WorkersFragment.getNewInstance(bundle)
+
+        fragmentTransaction.add(R.id.fl_fragment, workersFragment)
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+        fragmentTransaction.addToBackStack(null)
+        fragmentTransaction.commit()
+    }
+
+    override fun openUserFragment(userId: Int) {
+        fragmentTransaction = supportFragmentManager.beginTransaction()
+
+        val bundle = Bundle()
+        bundle.putInt("userId", userId)
+
+        userFragment = UserFragment.getNewInstance(bundle)
+
+        fragmentTransaction.replace(R.id.fl_fragment, userFragment)
+        fragmentTransaction.setTransition(FragmentTransaction.TRANSIT_FRAGMENT_OPEN)
+        fragmentTransaction.addToBackStack(null)
+        fragmentTransaction.commit()
     }
 }

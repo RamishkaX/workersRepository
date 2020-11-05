@@ -24,7 +24,7 @@
         android:textSize="@dimen/title"
         android:textColor="@color/colorPrimary"
         android:layout_marginTop="24dp"/>
-    
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recycler_speciality"
         android:layout_width="match_parent"

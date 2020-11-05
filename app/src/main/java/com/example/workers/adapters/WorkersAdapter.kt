@@ -7,8 +7,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.workers.R
+import com.example.workers.listeners.OnAdapterItemListener
 import com.example.workers.models.SpecialityModel
 import com.example.workers.models.UserModel
+import com.example.workers.presenters.WorkersFragmentPresenter
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 import java.net.URL
@@ -16,7 +18,7 @@ import java.time.LocalDate
 import java.util.*
 import kotlin.collections.ArrayList
 
-class WorkersAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class WorkersAdapter(var workersFragmentPresenter: WorkersFragmentPresenter, var onAdapterItemListener: OnAdapterItemListener) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private var workersList: ArrayList<UserModel> = ArrayList()
 
@@ -33,6 +35,7 @@ class WorkersAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
         return WorkersViewHolder(
             itemView = itemView,
             workersList = workersList,
+            workersFragmentPresenter = workersFragmentPresenter,
             resources = Resources.getSystem()
         )
     }
@@ -43,17 +46,19 @@ class WorkersAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         if (holder is WorkersViewHolder) {
-            holder.bind(workerModel = workersList[position])
+            holder.bind(workerModel = workersList[position], onAdapterItemListener = onAdapterItemListener)
         }
     }
 
-    class WorkersViewHolder(itemView: View, workersList: ArrayList<UserModel>, val resources: Resources) : RecyclerView.ViewHolder(itemView) {
+    class WorkersViewHolder(itemView: View, val workersList: ArrayList<UserModel>, workersFragmentPresenter: WorkersFragmentPresenter, val resources: Resources) : RecyclerView.ViewHolder(itemView), View.OnClickListener {
 
         private var civAvatar: CircleImageView = itemView.findViewById(R.id.workers_civ_avatar)
         private var txtName: TextView = itemView.findViewById(R.id.workers_txt_name)
         private var txtAge: TextView = itemView.findViewById(R.id.workers_txt_age)
+        private lateinit var onAdapterItemListener: OnAdapterItemListener
 
-        fun bind(workerModel: UserModel) {
+        fun bind(workerModel: UserModel, onAdapterItemListener: OnAdapterItemListener) {
+
             civAvatar.setImageResource(R.drawable.ic_android_black_24dp)
 
             try {
@@ -65,9 +70,12 @@ class WorkersAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             txtName.text = "${workerModel.name} ${workerModel.lastName}"
             txtAge.text = "-"
 
-            workerModel.birthday.let {
+            workerModel.birthday?.let {
                 txtAge.text = "Возраст: ${ageCalc(it)}"
             }
+
+            this.onAdapterItemListener = onAdapterItemListener
+            itemView.setOnClickListener(this)
         }
 
         private fun ageCalc(birthday: String?) : String {
@@ -80,11 +88,19 @@ class WorkersAdapter : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
             val day = Calendar.getInstance().get(Calendar.DAY_OF_MONTH)
             val birthdayArray = birthday.split('.')
 
-            if (birthdayArray[1].toInt() >= month && birthdayArray[0].toInt() >= day) {
+            if (birthdayArray[1].toInt() > month) {
                 return (year - birthdayArray[2].toInt()).toString()
-            } else {
+            }
+            else if (birthdayArray[1].toInt() == month && birthdayArray[0].toInt() >= day) {
+                return (year - birthdayArray[2].toInt()).toString()
+            }
+            else {
                 return (year - birthdayArray[2].toInt() - 1).toString()
             }
+        }
+
+        override fun onClick(v: View?) {
+            this.onAdapterItemListener.onItemClick(workersList[adapterPosition].id)
         }
     }
 }

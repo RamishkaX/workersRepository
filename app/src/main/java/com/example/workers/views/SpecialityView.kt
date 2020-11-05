@@ -16,4 +16,5 @@ interface SpecialityView: MvpView {
     fun specialityLoaded(dbHandler: DBHandler, workModel: WorkModel)
     fun specialityNotLoaded(text: String, dbHandler: DBHandler)
     fun openWorkersFragment(specialityId: Int)
+    fun openUserFragment(userId: Int)
 }

@@ -21,4 +21,8 @@ class WorkersFragmentPresenter : MvpPresenter<WorkersFragmentView>() {
         viewState.endLoading()
         viewState.setupWorkersList(workersList = userModelList)
     }
+
+    fun setUser(userId: Int) {
+        viewState.openUserFragment(userId = userId)
+    }
 }

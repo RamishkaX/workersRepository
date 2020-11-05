@@ -4,22 +4,26 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.arellomobile.mvp.MvpAppCompatFragment
 import com.arellomobile.mvp.presenter.InjectPresenter
 import com.example.workers.R
+import com.example.workers.activities.MainActivity
 import com.example.workers.adapters.SpecialityAdapter
 import com.example.workers.adapters.WorkersAdapter
 import com.example.workers.handlers.DBHandler
+import com.example.workers.listeners.OnAdapterItemListener
 import com.example.workers.models.UserModel
 import com.example.workers.presenters.SpecialityPresenter
 import com.example.workers.presenters.WorkersFragmentPresenter
+import com.example.workers.views.SpecialityView
 import com.example.workers.views.WorkersFragmentView
 import com.github.rahatarmanahmed.cpv.CircularProgressView
 
-class WorkersFragment : MvpAppCompatFragment(), WorkersFragmentView {
+class WorkersFragment : MvpAppCompatFragment(), WorkersFragmentView, OnAdapterItemListener {
 
     @InjectPresenter
     lateinit var workersFragmentPresenter: WorkersFragmentPresenter
@@ -48,7 +52,7 @@ class WorkersFragment : MvpAppCompatFragment(), WorkersFragmentView {
         val specialityId = this.arguments?.get("specialityId") as Int
         workersFragmentPresenter.loadWorkers(specialityId = specialityId, dbHandler = dbHandler)
 
-        workersAdapter = WorkersAdapter()
+        workersAdapter = WorkersAdapter(workersFragmentPresenter = workersFragmentPresenter, onAdapterItemListener = this)
         rvWorkers.adapter = workersAdapter
         rvWorkers.layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
         rvWorkers.setHasFixedSize(true)
@@ -69,7 +73,9 @@ class WorkersFragment : MvpAppCompatFragment(), WorkersFragmentView {
     }
 
     override fun openUserFragment(userId: Int) {
+        val mainActivity = activity as? SpecialityView
 
+        mainActivity?.openUserFragment(userId)
     }
 
     override fun showError(textResource: Int) {
@@ -78,5 +84,9 @@ class WorkersFragment : MvpAppCompatFragment(), WorkersFragmentView {
 
     override fun showError(text: String) {
         Toast.makeText(context, text, Toast.LENGTH_SHORT).show()
+    }
+
+    override fun onItemClick(id: Int) {
+        openUserFragment(userId = id)
     }
 }
